@@ -1,9 +1,12 @@
+import java.util.*
+
 fun main(args: Array<String>) {
 
 }
 
 //создаем Data class для хранения данных об объекте
 data class Post(
+    var id: Int,
     val owner_id: Int,
     val from_id: Int,
     val created_by: Int,
@@ -13,20 +16,28 @@ data class Post(
     val reply_post_id: Int,
     val friends_only: Boolean,
     val likes: Int,
-    private val id: Int,
 ) {
 }
 
 //одно из полей class Post типа object
-object Comments(
-    var count = 0,
-    var can_post: Boolean,
-    var groups_can_post: Boolean,
-    var can_close: Boolean,
-    var can_open: Boolean
+class Comments(
+    var count: Int,
+    val can_post: Boolean,
+    val groups_can_post: Boolean,
+    val can_close: Boolean,
+    val can_open: Boolean
 ) {
-    fun addComment() count += 1 //функция добавления коментария со счетчиком
-    fun deleteComment() count = if (count > 0) count -= 1 else count //аналогичная функция удаления комментария
+    //функция добавления комментария со счетчиком
+    fun addComment() {
+        count += 1
+    }
+
+    //аналогичная функция удаления комментария
+    fun deleteComment() {
+        if (count > 0) {
+            count -= 1
+        } else count
+    }
 }
 
 //создаем объект, в котором будет описываться логика или синглтон
@@ -35,27 +46,23 @@ object WallService {
 
     fun add(post: Post): Post {
         posts += post
-        id =
-            UUID.randomUUID() //UUID (Универсально уникальные идентификаторы) содержат 128 бит энтропии, и обычно считается крайне маловероятным, что случайный UUID когда-либо будет создан дважды (конечно, это возможно, просто маловероятно).
+        post.id = (0..10).random() * posts.size//создаем уникальный id каждому посту
         return posts.last()
     }
 
     //обновление записи
     fun update(post: Post): Boolean {
         for ((index, post) in posts.withIndex())
-            if (post.id == id) {
+            return if (post.id == posts[index].id) {
                 posts[index] = post.copy(
-                    owner_id = UUID.randomUUID(),
-                    from_id = UUID.randomUUID(),
-                    created_by = UUID.randomUUID(),
-                    date = "12/12/2023"
-                            text : = "About me"
-                            reply_owner_id = UUID . randomUUID (),
-                    reply_post_id = UUID.randomUUID(),
+                    date = 12,
+                    text = "About me",
                     friends_only = true,
-                    likes = posts.likes + 1
+                    likes = post.likes + 1
                 )
+                true
             } else false
+        return false
     }
 }
 
