@@ -1,6 +1,4 @@
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.Assertions
-import kotlin.test.assertContentEquals
+import org.junit.Test
 import kotlin.test.assertEquals
 
 class WallServiceTest {

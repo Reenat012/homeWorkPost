@@ -1,5 +1,3 @@
-import java.util.*
-
 fun main(args: Array<String>) {
 
 }
@@ -7,14 +5,14 @@ fun main(args: Array<String>) {
 //создаем Data class для хранения данных об объекте
 data class Post(
     var id: Int,
-    val owner_id: Int,
-    val from_id: Int,
-    val created_by: Int,
+    val ownerId: Int,
+    val fromId: Int,
+    val createdBy: Int,
     val date: Int,
     val text: String,
-    val reply_owner_id: Int,
-    val reply_post_id: Int,
-    val friends_only: Boolean,
+    val replyOwnerId: Int,
+    val replyPostId: Int,
+    val friendsOnly: Boolean,
     val likes: Int,
 ) {
 }
@@ -22,10 +20,10 @@ data class Post(
 //одно из полей class Post типа object
 class Comments(
     var count: Int,
-    val can_post: Boolean,
-    val groups_can_post: Boolean,
-    val can_close: Boolean,
-    val can_open: Boolean
+    val canPost: Boolean,
+    val groupsCanPost: Boolean,
+    val canClose: Boolean,
+    val canOpen: Boolean
 ) {
     //функция добавления комментария со счетчиком
     fun addComment() {
@@ -44,24 +42,22 @@ class Comments(
 object WallService {
     private var posts = emptyArray<Post>() //создаем пустой массив для хранения постов
 
+
     fun add(post: Post): Post {
-        posts += post
-        post.id = (0..10).random() * posts.size//создаем уникальный id каждому посту
+        posts += post.copy()
+        var counter = 0 //объявляем счетчик
+        post.id = ++counter//создаем уникальный id каждому посту
         return posts.last()
     }
 
     //обновление записи
     fun update(post: Post): Boolean {
-        for ((index, post) in posts.withIndex())
-            return if (post.id == posts[index].id) {
-                posts[index] = post.copy(
-                    date = 12,
-                    text = "About me",
-                    friends_only = true,
-                    likes = post.likes + 1
-                )
-                true
-            } else false
+        for ((index, item) in posts.withIndex()) { //перебераем массив posts и присваиваем индексы в index, элементы в item
+            if (item.id == post.id) {//сравниваем id входного параметра post и массива постов posts
+                posts[index] = post //если условие верно, присваиваем элементу posts новое значения post
+                return true
+            }
+        }
         return false
     }
 }
