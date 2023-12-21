@@ -1,59 +1,45 @@
 import org.junit.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class WallServiceTest {
 
     @Test
     fun add() {
-        val post = Post(1,
-            2,
-            3,
-            4,
-            5,
-            "About me",
-            6,
-            7,
-            true,
-            9)
+        val service = WallService
 
-        val result = WallService.add(post)
+        val result = service.add(Post())
 
         assertEquals(1, result.id)
     }
 
     @Test
     fun updateIdContains() {
-        val post = Post(1,
-            2,
-            3,
-            4,
-            5,
-            "About me",
-            6,
-            7,
-            true,
-            9)
+        val service = WallService
 
-        val result = WallService.update(post)
+        service.add(Post(id = 1))
+        service.add(Post(id = 2))
+        service.add(Post(id = 3))
 
-        assertEquals(true, result)
+        val update = Post(1, text = "Hello!")
+
+        val result = service.update(update)
+
+        assertTrue(result)
     }
 
     @Test
     fun updateIdNoContains() {
-        val post = Post(0,
-            2,
-            3,
-            4,
-            5,
-            "About me",
-            6,
-            7,
-            true,
-            9)
+        val service = WallService
 
-        val result = WallService.update(post)
+        service.add(Post(id = 2))
+        service.add(Post(id = 3))
 
-        assertEquals(false, result)
+        val update = Post(id = 4, text = "Hello!")
+
+        val result = service.update(update)
+
+        assertTrue(result)
     }
 }
