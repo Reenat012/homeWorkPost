@@ -25,7 +25,7 @@ class WallServiceTest {
 
         service.add(Post(id = 1))
         service.add(Post(id = 2))
-        service.add(Post(id = 3))
+        service.add(Post(id = 4))
 
         val update = Post(1, text = "Hello!")
 
