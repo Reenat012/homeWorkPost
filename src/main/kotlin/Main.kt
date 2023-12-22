@@ -20,7 +20,7 @@ data class Post(
 
 //одно из полей class Post типа object
 class Comments(
-    var count: Int, 1
+    var count: Int,
     val canPost: Boolean,
     val groupsCanPost: Boolean,
     val canClose: Boolean,
