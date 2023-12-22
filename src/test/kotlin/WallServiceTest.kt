@@ -19,7 +19,7 @@ class WallServiceTest {
     }
 
     @Test
-    fun updateIdContains() {
+    fun updateExisting() {
         val service = WallService
 
         service.add(Post(id = 1))
@@ -34,7 +34,7 @@ class WallServiceTest {
     }
 
     @Test
-    fun updateIdNoContains() {
+    fun updateNoExisting() {
         val service = WallService
 
         service.add(Post(id = 2))
