@@ -44,11 +44,14 @@ object WallService {
     private var posts = emptyArray<Post>() //создаем пустой массив для хранения постов
     var counter = 0 //объявляем счетчик, на одном уровне с массивом, иначе он каждый раз будет создаваться заново
 
+    fun clear() {
+        posts = emptyArray()
+        counter = 0
+    }
 
     fun add(post: Post): Post {
         posts += post.copy(id = ++counter) //создаем копию исходного поста в массив, указываем id в параметрах
 
-        post.id = ++counter//создаем уникальный id каждому посту
         return posts.last()
     }
 

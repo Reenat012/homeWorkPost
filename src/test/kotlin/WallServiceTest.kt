@@ -1,9 +1,14 @@
+import org.junit.Before
 import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class WallServiceTest {
+    @Before
+    fun clearBeforeTest() {
+        WallService.clear()
+    }
 
     @Test
     fun add() {
@@ -40,6 +45,6 @@ class WallServiceTest {
 
         val result = service.update(update)
 
-        assertTrue(result)
+        assertFalse(result)
     }
 }
