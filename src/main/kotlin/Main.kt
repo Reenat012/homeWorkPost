@@ -45,12 +45,22 @@ data class Post(
     val likes: Int? = null, //создаем nullable свойство
     val comments: Comments = Comments(0, false, false, false, false),
 ) {
-    val video = Video(id = 1)
+    val video = Video(1)
+    val videoAttachment = VideoAttachment(video)
+
     val audio = Audio(2)
+    val audioAttachment = AudioAttachment(audio)
+
     val photo = Photo(3)
+    val photoAttachment = PhotoAttachment(photo)
+
     val file = File(4)
+    val fileAttachment = FileAttachment(file)
+
     val gift = Gift(5)
-    val arrAttachment = arrayOf(video, audio, photo,file, gift)
+    val giftAttachment = GiftAttachment(gift)
+
+    val arrAttachment = arrayOf<Attachment>(videoAttachment, audioAttachment, photoAttachment,fileAttachment, giftAttachment)
 }
 
 //одно из полей class Post типа object
