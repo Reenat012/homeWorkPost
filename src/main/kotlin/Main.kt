@@ -13,8 +13,8 @@ data class Post(
     val replyOwnerId: Int = 71,
     val replyPostId: Int = 81,
     val friendsOnly: Boolean = false,
-    val likes: Int = 0,
-    val comments: Comments = Comments(0, false, false, false, false)
+    val likes: Int? = null, //создаем nullable свойство
+    val comments: Comments = Comments(0, false, false, false, false),
 ) {
 }
 
@@ -41,6 +41,12 @@ class Comments(
 
 //создаем объект, в котором будет описываться логика или синглтон
 object WallService {
+    val postOne = Post(likes = 1)
+    val postTwo = Post()
+
+    val arrPosts = arrayOf(postOne, postTwo)
+    val likes = (if (postOne.likes == null) 0 else 1)
+
     private var posts = emptyArray<Post>() //создаем пустой массив для хранения постов
     var counter = 0 //объявляем счетчик, на одном уровне с массивом, иначе он каждый раз будет создаваться заново
 
