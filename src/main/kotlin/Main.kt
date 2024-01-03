@@ -2,6 +2,35 @@ fun main(args: Array<String>) {
 
 }
 
+interface Attachment {
+    val type: String
+}
+
+data class Photo(val id: Int)
+data class PhotoAttachment(val photo: Photo) : Attachment {
+    override val type: String = "photo"
+}
+
+data class Video(val id: Int)
+data class VideoAttachment(val video: Video) : Attachment {
+    override val type: String = "video"
+}
+
+data class Audio(val id: Int)
+data class AudioAttachment(val audio: Audio) : Attachment {
+    override val type: String = "audio"
+}
+
+data class File(val id: Int)
+data class FileAttachment(val file: File) : Attachment {
+    override val type: String = "file"
+}
+
+data class Gift(var id: Int)
+data class GiftAttachment(val gift: Gift) : Attachment {
+    override val type: String = "gift"
+}
+
 //создаем Data class для хранения данных об объекте
 data class Post(
     var id: Int = 1,
@@ -16,6 +45,12 @@ data class Post(
     val likes: Int? = null, //создаем nullable свойство
     val comments: Comments = Comments(0, false, false, false, false),
 ) {
+    val video = Video(id = 1)
+    val audio = Audio(2)
+    val photo = Photo(3)
+    val file = File(4)
+    val gift = Gift(5)
+    val arrAttachment = arrayOf(video, audio, photo,file, gift)
 }
 
 //одно из полей class Post типа object
