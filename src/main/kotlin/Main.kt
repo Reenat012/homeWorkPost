@@ -1,5 +1,7 @@
-fun main(args: Array<String>) {
+import java.lang.RuntimeException
+import javax.xml.stream.events.Comment
 
+fun main(args: Array<String>) {
 }
 
 interface Attachment {
@@ -60,7 +62,8 @@ data class Post(
     val gift = Gift(5)
     val giftAttachment = GiftAttachment(gift)
 
-    val arrAttachment = arrayOf<Attachment>(videoAttachment, audioAttachment, photoAttachment,fileAttachment, giftAttachment)
+    val arrAttachment =
+        arrayOf<Attachment>(videoAttachment, audioAttachment, photoAttachment, fileAttachment, giftAttachment)
 }
 
 //одно из полей class Post типа object
@@ -95,6 +98,8 @@ object WallService {
     private var posts = emptyArray<Post>() //создаем пустой массив для хранения постов
     var counter = 0 //объявляем счетчик, на одном уровне с массивом, иначе он каждый раз будет создаваться заново
 
+    private var comments = emptyArray<Comments>() //создаем массив для хранения комментариев
+
     fun clear() {
         posts = emptyArray()
         counter = 0
@@ -116,5 +121,17 @@ object WallService {
         }
         return false
     }
+
+    fun createComment(postId: Int, comment: Comments): Comments? {
+            for ((index, item) in posts.withIndex()) { //возвращает массив элемента и сам элемент
+                if (item.id == postId) {
+                    comments[index] = comment //присваем элементу массива значения comment
+                    return comments[index]
+                } else throw PostNotFoundException("Такого id не существует!")
+            }
+        return null
+    }
 }
+
+class PostNotFoundException(message: String) : RuntimeException(message)
 
