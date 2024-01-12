@@ -2,6 +2,10 @@ import java.lang.RuntimeException
 import javax.xml.stream.events.Comment
 
 fun main(args: Array<String>) {
+    val service = WallService
+    service.add(Post(id = 1))
+
+    print(service.createComment(1, Comments()))
 }
 
 interface Attachment {
@@ -68,11 +72,11 @@ data class Post(
 
 //одно из полей class Post типа object
 class Comments(
-    var count: Int,
-    val canPost: Boolean,
-    val groupsCanPost: Boolean,
-    val canClose: Boolean,
-    val canOpen: Boolean
+    var count: Int = 0,
+    val canPost: Boolean = false,
+    val groupsCanPost: Boolean = false,
+    val canClose: Boolean = false,
+    val canOpen: Boolean = false
 ) {
     //функция добавления комментария со счетчиком
     fun addComment() {
@@ -98,7 +102,7 @@ object WallService {
     private var posts = emptyArray<Post>() //создаем пустой массив для хранения постов
     var counter = 0 //объявляем счетчик, на одном уровне с массивом, иначе он каждый раз будет создаваться заново
 
-    private var comments = emptyArray<Comments>() //создаем массив для хранения комментариев
+    private var comments = emptyArray<Comments>() //создаем пустой массив для хранения комментариев
 
     fun clear() {
         posts = emptyArray()
@@ -108,7 +112,7 @@ object WallService {
     fun add(post: Post): Post {
         posts += post.copy(id = ++counter) //создаем копию исходного поста в массив, указываем id в параметрах
 
-        return posts.last()
+        return posts.last() //возвращаем последний добавленный пост
     }
 
     //обновление записи
@@ -123,12 +127,12 @@ object WallService {
     }
 
     fun createComment(postId: Int, comment: Comments): Comments? {
-            for ((index, item) in posts.withIndex()) { //возвращает массив элемента и сам элемент
-                if (item.id == postId) {
-                    comments[index] = comment //присваем элементу массива значения comment
-                    return comments[index]
-                } else throw PostNotFoundException("Такого id не существует!")
-            }
+        for ((index, item) in posts.withIndex()) { //возвращает массив элемента и сам элемент
+            if (item.id == postId) {
+                comments += comment //присваиваем элементу массива значения comment
+                return comments.last()
+            } else throw PostNotFoundException("Такого id не существует!")
+        }
         return null
     }
 }

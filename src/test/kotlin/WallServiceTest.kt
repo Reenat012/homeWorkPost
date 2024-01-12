@@ -46,4 +46,16 @@ class WallServiceTest {
 
         assertFalse(result)
     }
+
+    @Test
+    fun allRigth() {
+        val service = WallService
+
+        service.add(Post(id = 1))
+        val comment = Comments()
+
+        val result = service.createComment(1, comment)
+
+        assertEquals(comment, result)
+    }
 }
