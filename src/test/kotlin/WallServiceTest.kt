@@ -58,4 +58,15 @@ class WallServiceTest {
 
         assertEquals(comment, result)
     }
+
+    @Test(expected = PostNotFoundException::class)
+    fun shouldThrow() {
+        // здесь код с вызовом функции, которая должна выкинуть PostNotFoundException
+        val service = WallService
+
+        service.add(Post(id = 1))
+        val comment = Comments()
+
+        service.createComment(2, comment)
+    }
 }
