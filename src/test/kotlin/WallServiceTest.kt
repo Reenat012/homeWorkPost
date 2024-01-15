@@ -52,7 +52,7 @@ class WallServiceTest {
         val service = WallService
 
         service.add(Post(id = 1))
-        val comment = Comments()
+        val comment = Comments(1)
 
         val result = service.createComment(1, comment)
 
@@ -65,7 +65,7 @@ class WallServiceTest {
         val service = WallService
 
         service.add(Post(id = 1))
-        val comment = Comments()
+        val comment = Comments(1)
 
         service.createComment(2, comment)
     }
