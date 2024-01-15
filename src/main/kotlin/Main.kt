@@ -125,14 +125,14 @@ object WallService {
         return false
     }
 
-    fun createComment(postId: Int, comment: Comments): Comments? { //создаем комментарий
+    fun createComment(postId: Int, comment: Comments): Comments { //создаем комментарий
         for ((index, item) in posts.withIndex()) { //возвращает массив элемента и сам элемент
             if (item.id == postId) {
                 comments += comment //присваиваем элементу массива значения comment
                 return comments.last()
-            } else throw PostNotFoundException("Такого id не существует!")
+            }
         }
-        return null
+        throw PostNotFoundException("Такого id не существует!")
     }
 
     fun reportComment(comment: Comments, commentId: Int) : Int {
