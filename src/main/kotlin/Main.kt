@@ -1,4 +1,5 @@
 import java.lang.RuntimeException
+import javax.print.attribute.standard.JobStateReason
 import javax.xml.stream.events.Comment
 
 fun main(args: Array<String>) {
@@ -71,7 +72,8 @@ data class Post(
 }
 
 //одно из полей class Post типа object
-class Comments(
+open class Comments(
+    var ownerId: Int,
     var count: Int = 0,
     val canPost: Boolean = false,
     val groupsCanPost: Boolean = false,
@@ -103,6 +105,7 @@ object WallService {
     var counter = 0 //объявляем счетчик, на одном уровне с массивом, иначе он каждый раз будет создаваться заново
 
     private var comments = emptyArray<Comments>() //создаем пустой массив для хранения комментариев
+    private var reportComments = emptyArray<Comments>() //создаем пустой массив для хранения негативных комментариев
 
     fun clear() {
         posts = emptyArray()
@@ -135,7 +138,18 @@ object WallService {
         }
         return null
     }
+
+    fun reportComment(comment: Comments, commentId: Int) : Int {
+        for ((index, item) in comments.withIndex()) {
+            if (item.ownerId == commentId) {
+                reportComments += comment ////присваиваем элементу массива значения comment
+                return 1 //после успешного выполнения возвращаем 1
+            }
+        }
+        return 0 //не удалось добавить комментарий в нежелательные 0
+    }
 }
+
 
 class PostNotFoundException(message: String) : RuntimeException(message)
 
