@@ -3,10 +3,6 @@ import javax.print.attribute.standard.JobStateReason
 import javax.xml.stream.events.Comment
 
 fun main(args: Array<String>) {
-    val service = WallService
-    service.add(Post(id = 1))
-
-    print(service.createComment(1, Comments()))
 }
 
 interface Attachment {
@@ -50,7 +46,7 @@ data class Post(
     val replyPostId: Int = 81,
     val friendsOnly: Boolean = false,
     val likes: Int? = null, //создаем nullable свойство
-    val comments: Comments = Comments(0, false, false, false, false),
+    val comments: Comments = Comments(1, 0, false, false, false, false),
 ) {
     val video = Video(1)
     val videoAttachment = VideoAttachment(video)
