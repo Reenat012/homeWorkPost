@@ -52,7 +52,7 @@ class WallServiceTest {
         val service = WallService
 
         service.add(Post(id = 1))
-        val comment = Comments()
+        val comment = Comments(1)
 
         val result = service.createComment(1, comment)
 
@@ -65,8 +65,32 @@ class WallServiceTest {
         val service = WallService
 
         service.add(Post(id = 1))
-        val comment = Comments()
+        val comment = Comments(1)
 
         service.createComment(2, comment)
+    }
+
+    @Test
+    fun reportComment() {
+        val service = WallService
+
+        service.add(Post(id = 1))
+        service.createComment(1, Comments(1))
+
+        val result = service.reportComment(Comments(1), 1)
+
+        assertEquals(1, result)
+    }
+
+    @Test(expected = PostNotFoundException::class)
+    fun shouldThrowReportComment() {
+        // здесь код с вызовом функции, которая должна выкинуть PostNotFoundException
+        val service = WallService
+
+        service.add(Post(id = 1))
+        service.createComment(1, Comments(1))
+
+
+        service.createComment(2, Comments(1))
     }
 }

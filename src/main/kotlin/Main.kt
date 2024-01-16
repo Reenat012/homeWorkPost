@@ -1,11 +1,8 @@
 import java.lang.RuntimeException
+import javax.print.attribute.standard.JobStateReason
 import javax.xml.stream.events.Comment
 
 fun main(args: Array<String>) {
-    val service = WallService
-    service.add(Post(id = 1))
-
-    print(service.createComment(1, Comments()))
 }
 
 interface Attachment {
@@ -49,7 +46,7 @@ data class Post(
     val replyPostId: Int = 81,
     val friendsOnly: Boolean = false,
     val likes: Int? = null, //создаем nullable свойство
-    val comments: Comments = Comments(0, false, false, false, false),
+    val comments: Comments = Comments(1, 0, false, false, false, false),
 ) {
     val video = Video(1)
     val videoAttachment = VideoAttachment(video)
@@ -71,7 +68,8 @@ data class Post(
 }
 
 //одно из полей class Post типа object
-class Comments(
+open class Comments(
+    var ownerId: Int,
     var count: Int = 0,
     val canPost: Boolean = false,
     val groupsCanPost: Boolean = false,
@@ -103,6 +101,7 @@ object WallService {
     var counter = 0 //объявляем счетчик, на одном уровне с массивом, иначе он каждый раз будет создаваться заново
 
     private var comments = emptyArray<Comments>() //создаем пустой массив для хранения комментариев
+    private var reportComments = emptyArray<Comments>() //создаем пустой массив для хранения негативных комментариев
 
     fun clear() {
         posts = emptyArray()
@@ -126,16 +125,27 @@ object WallService {
         return false
     }
 
-    fun createComment(postId: Int, comment: Comments): Comments? {
+    fun createComment(postId: Int, comment: Comments): Comments { //создаем комментарий
         for ((index, item) in posts.withIndex()) { //возвращает массив элемента и сам элемент
             if (item.id == postId) {
                 comments += comment //присваиваем элементу массива значения comment
                 return comments.last()
+            }
+        }
+        throw PostNotFoundException("Такого id не существует!")
+    }
+
+    fun reportComment(comment: Comments, commentId: Int) : Int {
+        for ((index, item) in comments.withIndex()) {
+            if (item.ownerId == commentId) { //если id комментария совпадает с id, на который пожаловались
+                reportComments += comment ////присваиваем элементу массива значения comment, добавляем комментарий в нежелательные
+                return 1 //после успешного выполнения возвращаем 1
             } else throw PostNotFoundException("Такого id не существует!")
         }
-        return null
+        return 0 //не удалось добавить комментарий в нежелательные 0
     }
 }
+
 
 class PostNotFoundException(message: String) : RuntimeException(message)
 
