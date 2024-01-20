@@ -140,9 +140,9 @@ object WallService {
             if (item.ownerId == commentId) { //если id комментария совпадает с id, на который пожаловались
                 reportComments += comment ////присваиваем элементу массива значения comment, добавляем комментарий в нежелательные
                 return 1 //после успешного выполнения возвращаем 1
-            } else throw PostNotFoundException("Такого id не существует!")
+            }
         }
-        return 0 //не удалось добавить комментарий в нежелательные 0
+        throw PostNotFoundException("Такого id не существует!") //выбрасываем ошибку, если не существует id
     }
 }
 
