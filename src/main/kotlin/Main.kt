@@ -36,7 +36,6 @@ data class GiftAttachment(val gift: Gift) : Attachment {
 
 //создаем Data class для хранения данных об объекте
 data class Post(
-    var id: Int = 1,
     val ownerId: Int = 21,
     val fromId: Int = 31,
     val createdBy: Int = 41,
@@ -46,7 +45,7 @@ data class Post(
     val replyPostId: Int = 81,
     val friendsOnly: Boolean = false,
     val likes: Int? = null, //создаем nullable свойство
-    val comments: Comments = Comments(1, 0, false, false, false, false),
+    val comments: MutableList<Comments> = mutableListOf()
 ) {
     val video = Video(1)
     val videoAttachment = VideoAttachment(video)
@@ -71,10 +70,6 @@ data class Post(
 open class Comments(
     var ownerId: Int,
     var count: Int = 0,
-    val canPost: Boolean = false,
-    val groupsCanPost: Boolean = false,
-    val canClose: Boolean = false,
-    val canOpen: Boolean = false
 ) {
     //функция добавления комментария со счетчиком
     fun addComment() {
@@ -97,52 +92,38 @@ object WallService {
     val arrPosts = arrayOf(postOne, postTwo)
     val likes = (if (postOne.likes == null) 0 else 1)
 
-    private var posts = emptyArray<Post>() //создаем пустой массив для хранения постов
+    private var posts = mutableMapOf<Int, Post>() //создаем пустой массив для хранения постов
     var counter = 0 //объявляем счетчик, на одном уровне с массивом, иначе он каждый раз будет создаваться заново
 
     private var comments = emptyArray<Comments>() //создаем пустой массив для хранения комментариев
     private var reportComments = emptyArray<Comments>() //создаем пустой массив для хранения негативных комментариев
 
     fun clear() {
-        posts = emptyArray()
+        posts.clear()
         counter = 0
     }
 
     fun add(post: Post): Post {
-        posts += post.copy(id = ++counter) //создаем копию исходного поста в массив, указываем id в параметрах
-
-        return posts.last() //возвращаем последний добавленный пост
+        posts[counter++] = post
+        return post
     }
 
     //обновление записи
-    fun update(post: Post): Boolean {
-        for ((index, item) in posts.withIndex()) { //перебераем массив posts и присваиваем индексы в index, элементы в item
-            if (item.id == post.id) {//сравниваем id входного параметра post и массива постов posts
-                posts[index] = post.copy() //если условие верно, присваиваем элементу posts новое значения post
-                return true
-            }
-        }
-        return false
+    fun update(post: Post): Post {
+        posts[post.ownerId] = post
+        return post
     }
 
-    fun createComment(postId: Int, comment: Comments): Comments? { //создаем комментарий
-        for ((index, item) in posts.withIndex()) { //возвращает массив элемента и сам элемент
-            if (item.id == postId) {
-                comments += comment //присваиваем элементу массива значения comment
-                return comments.last()
-            } else throw PostNotFoundException("Такого id не существует!")
-        }
-        return null
+    fun createComment(postId: Int, comment: Comments): Comments { //создаем комментарий
+        posts[postId]?.comments?.plusAssign(comment) ?: throw PostNotFoundException("Такого поста нет")
+        return comments.last()
     }
 
-    fun reportComment(comment: Comments, commentId: Int) : Int {
-        for ((index, item) in comments.withIndex()) {
-            if (item.ownerId == commentId) { //если id комментария совпадает с id, на который пожаловались
-                reportComments += comment ////присваиваем элементу массива значения comment, добавляем комментарий в нежелательные
-                return 1 //после успешного выполнения возвращаем 1
-            }
-        }
-        throw PostNotFoundException("Такого id не существует!") //выбрасываем ошибку, если не существует id
+    fun reportComment(commentId: Int) : Array<Comments> {
+        reportComments += comments
+            .filter { it.ownerId == commentId }
+            .ifEmpty { throw PostNotFoundException("Такого комментария не найдено") }
+        return reportComments
     }
 }
 

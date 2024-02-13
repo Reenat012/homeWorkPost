@@ -77,7 +77,7 @@ class WallServiceTest {
         service.add(Post(id = 1))
         service.createComment(1, Comments(1))
 
-        val result = service.reportComment(Comments(1), 1)
+        val result = service.reportComment(1)
 
         assertEquals(1, result)
     }
