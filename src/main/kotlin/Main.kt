@@ -3,6 +3,21 @@ import javax.print.attribute.standard.JobStateReason
 import javax.xml.stream.events.Comment
 
 fun main(args: Array<String>) {
+    val service = WallService
+
+    service.add(Post())
+    service.add(Post())
+
+    println(service.getPost())
+
+    service.createComment(1, Comments())
+    service.createComment(1, Comments())
+
+    println(service.getPost())
+
+    service.reportComment(1, 1)
+
+    println(service.getPost())
 }
 
 interface Attachment {
@@ -36,16 +51,10 @@ data class GiftAttachment(val gift: Gift) : Attachment {
 
 //создаем Data class для хранения данных об объекте
 data class Post(
-    val ownerId: Int = 21,
-    val fromId: Int = 31,
-    val createdBy: Int = 41,
-    val date: Int = 51,
-    val text: String = "Hello World",
-    val replyOwnerId: Int = 71,
-    val replyPostId: Int = 81,
-    val friendsOnly: Boolean = false,
-    val likes: Int? = null, //создаем nullable свойство
-    val comments: MutableList<Comments> = mutableListOf()
+    val ownerId: Int = 0,
+    val likes: Int = 0,
+    val comments: MutableList<Comments> = mutableListOf(),
+    var reportComments: MutableList<Comments> = mutableListOf()
 ) {
     val video = Video(1)
     val videoAttachment = VideoAttachment(video)
@@ -67,22 +76,12 @@ data class Post(
 }
 
 //одно из полей class Post типа object
-open class Comments(
-    var ownerId: Int,
+data class Comments(
+    var ownerId: Int = 0,
     var count: Int = 0,
-) {
-    //функция добавления комментария со счетчиком
-    fun addComment() {
-        count += 1
-    }
+    var text: String = ""
+)
 
-    //аналогичная функция удаления комментария
-    fun deleteComment() {
-        if (count > 0) {
-            count -= 1
-        } else count
-    }
-}
 
 //создаем объект, в котором будет описываться логика или синглтон
 object WallService {
@@ -94,9 +93,13 @@ object WallService {
 
     private var posts = mutableMapOf<Int, Post>() //создаем пустой массив для хранения постов
     var counter = 0 //объявляем счетчик, на одном уровне с массивом, иначе он каждый раз будет создаваться заново
+    var count = 0//счетчик для id comments
 
     private var comments = emptyArray<Comments>() //создаем пустой массив для хранения комментариев
-    private var reportComments = emptyArray<Comments>() //создаем пустой массив для хранения негативных комментариев
+
+    fun getPost(): MutableMap<Int, Post> {
+        return posts
+    }
 
     fun clear() {
         posts.clear()
@@ -109,24 +112,36 @@ object WallService {
     }
 
     //обновление записи
-    fun update(post: Post): Post {
-        posts[post.ownerId] = post
-        return post
+    fun update(id: Int, post: Post): Post? {
+        for (item in posts) {
+            if (item.key == id) {
+                posts[item.key] = post.copy()
+                return posts[item.key]
+            }
+        }
+        throw PostNotFoundException("Такого поста нет")
     }
 
-    fun createComment(postId: Int, comment: Comments): Comments { //создаем комментарий
-        posts[postId]?.comments?.plusAssign(comment) ?: throw PostNotFoundException("Такого поста нет")
-        return comments.last()
+    fun createComment(postId: Int, comment: Comments): Boolean{ //создаем комментарий
+        posts[postId]
+            ?.comments
+            ?.plusAssign(comment.copy(ownerId = count++, count = +1)) ?: throw PostNotFoundException("Такого поста нет")
+        return true
     }
 
-    fun reportComment(commentId: Int) : Array<Comments> {
-        reportComments += comments
+    fun reportComment(postId: Int, commentId: Int): Comments {
+        posts[postId]?.reportComments = posts[postId]?.comments
+            ?.toMutableList()!!
             .filter { it.ownerId == commentId }
-            .ifEmpty { throw PostNotFoundException("Такого комментария не найдено") }
-        return reportComments
-    }
+            .toMutableList()
+
+        posts[postId]?.comments?.removeIf { it.ownerId == commentId } ?: throw PostNotFoundException("Post not found")
+        return posts[postId]?.reportComments?.last() ?: throw PostNotFoundException("Post not found")
+        //removeIf - удаляет элемент, который соответствует предикате
 }
 
 
 class PostNotFoundException(message: String) : RuntimeException(message)
+
+}
 

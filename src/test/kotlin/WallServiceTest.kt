@@ -1,6 +1,7 @@
 import junit.framework.TestCase.*
 import org.junit.Before
 import org.junit.Test
+import sun.java2d.Disposer.PollDisposable
 
 
 class WallServiceTest {
@@ -13,84 +14,47 @@ class WallServiceTest {
     fun add() {
         val service = WallService
 
-        val result = service.add(Post(likes = 1))
+        val result = service.add(Post())
 
-        assertEquals(1, result.id)
+        assertEquals(Post(), result)
     }
 
     @Test
-    fun updateExisting() {
+    fun update() {
         val service = WallService
 
-        service.add(Post(id = 1, likes = 1))
-        service.add(Post(id = 2, likes = 1))
-        service.add(Post(id = 4, likes = 1))
+        service.add(Post())
+        service.add(Post())
 
-        val update = Post(1, text = "Hello!", likes = 1)
+        val result = service.update(1 ,Post(likes = 1))
 
-        val result = service.update(update)
+        assertEquals(Post(likes = 1), result)
+    }
+
+
+    @Test
+    fun сreateCommentTest() {
+        val service = WallService
+
+        service.add(Post())
+
+        val result = service.createComment(0, Comments(1))
 
         assertTrue(result)
     }
 
-    @Test
-    fun updateNoExisting() {
-        val service = WallService
-
-        service.add(Post(id = 2, likes = 1))
-        service.add(Post(id = 3, likes = 2))
-
-        val update = Post(id = 4, text = "Hello!", likes = 2)
-
-        val result = service.update(update)
-
-        assertFalse(result)
-    }
-
-    @Test
-    fun allRigth() {
-        val service = WallService
-
-        service.add(Post(id = 1))
-        val comment = Comments(1)
-
-        val result = service.createComment(1, comment)
-
-        assertEquals(comment, result)
-    }
-
-    @Test(expected = PostNotFoundException::class)
-    fun shouldThrow() {
-        // здесь код с вызовом функции, которая должна выкинуть PostNotFoundException
-        val service = WallService
-
-        service.add(Post(id = 1))
-        val comment = Comments(1)
-
-        service.createComment(2, comment)
-    }
 
     @Test
     fun reportComment() {
         val service = WallService
 
-        service.add(Post(id = 1))
-        service.createComment(1, Comments(1))
+        service.add(Post())
+        service.add(Post())
+        service.createComment(1, Comments(text = "Hello"))
+        service.createComment(1, Comments(text = "HelloBob"))
 
-        val result = service.reportComment(1)
+        val result = service.reportComment(1, 0)
 
-        assertEquals(1, result)
-    }
-
-    @Test(expected = PostNotFoundException::class)
-    fun shouldThrowReportComment() {
-        // здесь код с вызовом функции, которая должна выкинуть PostNotFoundException
-        val service = WallService
-
-        service.add(Post(id = 1))
-        service.createComment(1, Comments(1))
-
-
-        service.createComment(2, Comments(1))
+        assertEquals(Comments(count = 1, text = "Hello"), result)
     }
 }
