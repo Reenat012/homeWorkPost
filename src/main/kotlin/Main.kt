@@ -108,11 +108,15 @@ object WallService {
         throw PostNotFoundException("Такого поста нет")
     }
 
+
     fun createComment(postId: Int, comment: Comments): Boolean{ //создаем комментарий
         posts[postId]
             ?.comments
             ?.plusAssign(comment.copy(ownerId = count++, count = +1)) ?: throw PostNotFoundException("Такого поста нет")
         return true
+
+
+
     }
 
     fun reportComment(postId: Int, commentId: Int): Comments {
