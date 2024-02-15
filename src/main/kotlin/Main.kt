@@ -3,21 +3,7 @@ import javax.print.attribute.standard.JobStateReason
 import javax.xml.stream.events.Comment
 
 fun main(args: Array<String>) {
-    val service = WallService
 
-    service.add(Post())
-    service.add(Post())
-
-    println(service.getPost())
-
-    service.createComment(1, Comments())
-    service.createComment(1, Comments())
-
-    println(service.getPost())
-
-    service.reportComment(1, 1)
-
-    println(service.getPost())
 }
 
 interface Attachment {
@@ -140,8 +126,5 @@ object WallService {
         //removeIf - удаляет элемент, который соответствует предикате
 }
 
-
 class PostNotFoundException(message: String) : RuntimeException(message)
-
 }
-

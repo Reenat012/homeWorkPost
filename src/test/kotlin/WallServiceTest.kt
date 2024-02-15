@@ -53,8 +53,8 @@ class WallServiceTest {
         service.createComment(1, Comments(text = "Hello"))
         service.createComment(1, Comments(text = "HelloBob"))
 
-        val result = service.reportComment(1, 0)
+        val result = service.reportComment(1, 1)
 
-        assertEquals(Comments(count = 1, text = "Hello"), result)
+        assertEquals(Comments(ownerId = 1, count = 1, text = "Hello"), result)
     }
 }
